@@ -1,11 +1,24 @@
 # ============================================================
-# RESOURCE GROUPS
+# RESOURCE GROUP
 # ============================================================
-module "resource_group" {
-  source   = "./modules/resource-group"
-  for_each = var.resource_groups
+module "rg" {
+  source = "./modules/resource-group"
 
-  name     = each.key
-  location = coalesce(each.value.location, var.location)
+  name     = var.rg_name
+  location = var.location
   tags     = var.tags
+}
+
+# ============================================================
+# VIRTUAL NETWORK
+# ============================================================
+module "vnet" {
+  source = "./modules/virtual-network"
+
+  name                = var.vnet_name
+  resource_group_name = module.rg.name
+  location            = var.location
+  address_space       = var.vnet_address_space
+  subnets             = var.subnets
+  tags                = var.tags
 }
